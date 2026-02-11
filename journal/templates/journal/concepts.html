@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">Concept Library</h3>
+    <div class="small-muted">Admin manages this list. You drag these into timeframe slots on any day.</div>
+  </div>
+  <a class="btn btn-dark btn-sm" href="/">Back</a>
+</div>
+
+<div class="row g-2">
+  {% for c in concepts %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 concept-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>{{ c.name }}</strong>
+        </div>
+        {% if c.description %}
+          <div class="small-muted mt-2">{{ c.description }}</div>
+        {% endif %}
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="alert alert-warning">No concepts yet. Add them in the admin.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

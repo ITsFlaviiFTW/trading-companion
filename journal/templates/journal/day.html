@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">{{ dt }}</h3>
+    <div class="small-muted">Drag concepts into timeframes, then hit Save. Journal fields are below.</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-dark btn-sm" href="/">Calendar</a>
+    <button id="saveBtn" class="btn btn-dark btn-sm" type="button">Save slots</button>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-3">
+    <div class="card p-3">
+      <h5 class="mb-2">Library</h5>
+      <div class="small-muted mb-2">Drag from here into any timeframe.</div>
+      <div id="library" class="slot">
+        {% for c in concepts %}
+          <div class="card p-2 mb-2 concept-card" data-concept-id="{{ c.id }}">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center gap-2">
+                <span class="drag-handle">⠿</span>
+                <strong>{{ c.name }}</strong>
+              </div>
+            </div>
+            <input class="form-control form-control-sm mt-2 slot-note" placeholder="Optional note (why/where/how)" value="">
+          </div>
+        {% endfor %}
+      </div>
+      <div class="small-muted mt-2">
+        Tip: you can keep concepts in the library and also copy them into slots (clone mode is enabled).
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-9">
+    <div class="row g-3">
+      {% for tf_value, tf_label in timeframes %}
+        <div class="col-12 col-md-6">
+          <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="mb-0">{{ tf_label }}</h5>
+              <span class="badge bg-secondary">{{ tf_value }}</span>
+            </div>
+
+            <div class="small-muted mb-2">Drop concepts here in order of your setup.</div>
+            <div class="slot timeframe-slot" data-timeframe="{{ tf_value }}">
+              {% for it in by_tf|dictsort:tf_value %}
+              {% endfor %}
+
+              {% for it in by_tf[tf_value] %}
+                <div class="card p-2 mb-2 concept-card" data-concept-id="{{ it.concept.id }}">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="drag-handle">⠿</span>
+                      <strong>{{ it.concept.name }}</strong>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger remove-btn" type="button">Remove</button>
+                  </div>
+                  <input class="form-control form-control-sm mt-2 slot-note" placeholder="Optional note (why/where/how)" value="{{ it.note|default:'' }}">
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="card p-3 mt-3">
+      <h5 class="mb-2">Journal</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-2">
+          <div class="col-12 col-md-3">{{ form.session.label_tag }}{{ form.session }}</div>
+          <div class="col-12 col-md-3">{{ form.symbol.label_tag }}{{ form.symbol }}</div>
+          <div class="col-12 col-md-3 d-flex align-items-end">
+            <div class="form-check">
+              {{ form.trade_taken }}
+              <label class="form-check-label" for="{{ form.trade_taken.id_for_label }}">Trade taken</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <label class="form-label">Why did you take this trade?</label>
+          {{ form.why_taken }}
+        </div>
+
+        <div class="mt-2">
+          <label class="form-label">What did you do well?</label>
+          {{ form.what_i_did_well }}
+        </div>
+
+        <div class="mt-2">
+          <label class="form-label">What will you improve next time?</label>
+          {{ form.what_to_improve }}
+        </div>
+
+        <div class="mt-2">
+          <label class="form-label">General notes</label>
+          {{ form.general_notes }}
+        </div>
+
+        <button class="btn btn-dark mt-3" type="submit">Save journal</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+  const SAVE_URL = "{% url 'save_slots_api' dt.year dt.month dt.day %}";
+  const CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<script src="/static/journal/day.js"></script>
+{% endblock %}

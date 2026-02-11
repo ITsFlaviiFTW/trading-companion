@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">{{ month_name }} {{ year }}</h3>
+    <div class="small-muted">Tap a day to open your journal and confluences.</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-dark btn-sm" href="/?year={{ prev_year }}&month={{ prev_month }}">Prev</a>
+    <a class="btn btn-outline-dark btn-sm" href="/?year={{ next_year }}&month={{ next_month }}">Next</a>
+  </div>
+</div>
+
+<div class="row row-cols-7 g-2">
+  {% for d in month_days %}
+    <div class="col">
+      <a class="text-decoration-none" href="{% url 'day' d.year d.month d.day %}">
+        <div class="p-2 calendar-cell border {% if d == today %}border-dark{% endif %} {% if d.month != month %}opacity-50{% endif %}">
+          <div class="calendar-day">{{ d.day }}</div>
+          {% if d in journal_days %}
+            <div class="badge bg-success mt-2">Saved</div>
+          {% else %}
+            <div class="small-muted mt-2">—</div>
+          {% endif %}
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
