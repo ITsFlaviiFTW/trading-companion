@@ -1,0 +1,10 @@
+{
+  "name": "Trading Companion",
+  "short_name": "Companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#111827",
+  "description": "Session checklist and trading journal.",
+  "icons": []
+}

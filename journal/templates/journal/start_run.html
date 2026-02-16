@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8">
+    <div class="card p-3">
+      <h4 class="mb-2">Start Session Run</h4>
+      <div class="small-muted mb-3">Choose strategy and symbol. The checklist is generated automatically.</div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="form-label">{{ form.strategy.label }}</label>
+          {{ form.strategy }}
+        </div>
+        <div class="mb-2">
+          <label class="form-label">{{ form.symbol.label }}</label>
+          {{ form.symbol }}
+        </div>
+        <button class="btn btn-dark" type="submit">Start</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

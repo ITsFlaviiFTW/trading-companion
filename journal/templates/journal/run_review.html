@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Session Review</h4>
+    <div class="small-muted">{{ run.strategy.name }} | {{ run.started_at|date:"Y-m-d H:i" }} | {{ checked_count }}/{{ total_count }} steps checked</div>
+  </div>
+  <a class="btn btn-outline-dark btn-sm" href="{% url 'run_detail' run.id %}">Back To Run</a>
+</div>
+
+<div class="card p-3 mb-3">
+  <h5 class="mb-2">Checklist Summary</h5>
+  {% for check in checks %}
+    <div class="border rounded p-2 mb-2">
+      <div class="d-flex justify-content-between">
+        <strong>{{ check.step.section.name }} - {{ check.step.title }}</strong>
+        <span class="badge {% if check.checked %}bg-success{% else %}bg-secondary{% endif %}">
+          {% if check.checked %}Checked{% else %}Not checked{% endif %}
+        </span>
+      </div>
+      {% if check.notes %}
+        <div class="small-muted mt-1">{{ check.notes }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<div class="card p-3">
+  <form method="post">
+    {% csrf_token %}
+    {% if review_form.errors or trade_form.errors %}
+      <div class="alert alert-danger">
+        Please fix the highlighted fields before saving.
+      </div>
+    {% endif %}
+    <h5 class="mb-2">Outcome</h5>
+    <div class="form-check mb-2">
+      {{ review_form.trade_taken }}
+      <label class="form-check-label" for="{{ review_form.trade_taken.id_for_label }}">Trade taken</label>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">{{ review_form.day_notes.label }}</label>
+      {{ review_form.day_notes }}
+    </div>
+
+    <h6 class="mb-2">Trade Details (fill if trade taken)</h6>
+    <div class="row g-2">
+      <div class="col-12 col-md-4">
+        <label class="form-label">{{ trade_form.direction.label }}</label>
+        {{ trade_form.direction }}
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">{{ trade_form.entry_time.label }}</label>
+        {{ trade_form.entry_time }}
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">{{ trade_form.result_r.label }}</label>
+        {{ trade_form.result_r }}
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">{{ trade_form.stop.label }}</label>
+        {{ trade_form.stop }}
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">{{ trade_form.target.label }}</label>
+        {{ trade_form.target }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">{{ trade_form.notes.label }}</label>
+        {{ trade_form.notes }}
+      </div>
+    </div>
+
+    <button class="btn btn-dark mt-3" type="submit">Save Review</button>
+  </form>
+</div>
+{% endblock %}

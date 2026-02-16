@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Strategy Library</h4>
+    <div class="small-muted">Admin-managed sections and confluence steps.</div>
+  </div>
+  <a class="btn btn-dark btn-sm" href="{% url 'start_run' %}">Start Session</a>
+</div>
+
+{% for strategy in strategies %}
+  <div class="card p-3 mb-3">
+    <h5 class="mb-1">{{ strategy.name }}</h5>
+    {% if strategy.description %}
+      <div class="small-muted mb-2">{{ strategy.description }}</div>
+    {% endif %}
+    {% for section in strategy.sections.all %}
+      <div class="border rounded p-2 mb-2">
+        <strong>{{ section.name }}</strong>
+        <ul class="mb-0 mt-1">
+          {% for step in section.steps.all %}
+            <li>{{ step.title }}</li>
+          {% empty %}
+            <li class="small-muted">No steps yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% empty %}
+      <div class="small-muted">No sections configured yet.</div>
+    {% endfor %}
+  </div>
+{% empty %}
+  <div class="alert alert-warning">No active strategies yet. Add one in admin.</div>
+{% endfor %}
+{% endblock %}
